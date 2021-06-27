@@ -88,31 +88,61 @@ struct TestView: View {
 
                     //submit button
                     Button(action: {
-                        submitted = true
                         
-                        //check the answer and increment the counter if correct
-                        if selectedAnswerIndex == model.currentQuestion!.correctIndex {
-                            numCorrect += 1
+                        //check if answer has been submitted
+                        if submitted == true {
+                            //reset properties
+                            submitted = false
+                            selectedAnswerIndex = nil
+                            
+                            //move to next question
+                            model.nextQuestion()
                         }
-                        
+                        else {
+                            //submit answer
+                            submitted = true
+                            
+                            //check the answer and increment the counter if correct
+                            if selectedAnswerIndex == model.currentQuestion!.correctIndex {
+                                numCorrect += 1
+                            }
+                        }
                     }, label: {
                         ZStack {
                             RectangleCard(color: .green)
                                 .frame(height: 48)
                             
-                            Text("Submit")
+                            Text(buttonText)
                                 .foregroundColor(.white)
                                 .bold()
                         }
                         .padding()
                     })
-                    .disabled((selectedAnswerIndex == nil) || submitted)
+                    .disabled(selectedAnswerIndex == nil)
                 }
                 .navigationBarTitle("\(model.currentModule?.category ?? "") Test")
                 
             }
         }
         
+    }
+    
+    var buttonText:String {
+        
+        //check if answer has been submitted
+        if submitted == true {
+            if model.currentQuestionIndex + 1 == model.currentModule!.test.questions.count {
+                //this is last question
+                return "Finish"
+            }
+            else {
+                //there is a next question
+                return "Next"
+            }
+        }
+        else {
+            return "Submit"
+        }
     }
 }
 
