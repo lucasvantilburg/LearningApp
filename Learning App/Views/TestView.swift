@@ -123,6 +123,10 @@ struct TestView: View {
                 .navigationBarTitle("\(model.currentModule?.category ?? "") Test")
                 
             }
+            else {
+                //if current question is nil, show result view
+                TestResultView(numCorrect: numCorrect)
+            }
         }
         
     }
