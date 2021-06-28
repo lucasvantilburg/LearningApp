@@ -35,7 +35,11 @@ class ContentModel: ObservableObject {
     
     init() {
         
+        //Parse local included data
         getLocalData()
+        
+        //Download and parse data
+        getRemoteData()
         
     }
     
@@ -73,6 +77,52 @@ class ContentModel: ObservableObject {
         }
         
         
+    }
+    
+    func getRemoteData() {
+        
+        //String path
+        let urlString = "https://lucasvantilburg.github.io/LearningApp-Data/data2.json"
+        
+        //create url object
+        let url = URL(string: urlString)
+        
+        guard url != nil else {
+            //url not found
+            return
+        }
+        
+        //create url request object
+        let request = URLRequest(url: url!)
+        
+        //get session and kick off task
+        let session = URLSession.shared
+        
+        let dataTask = session.dataTask(with: request) { data, response, error in
+            
+            //check for error
+            guard error == nil else {
+                //there was error
+                return
+            }
+            
+            //handle response
+            do {
+                //create json decoder
+                let decoder = JSONDecoder()
+                
+                let modules = try decoder.decode([Module].self, from: data!)
+                
+                //append parsed module to modules property
+                self.modules += modules
+            }
+            catch {
+                //couldn't parse data
+            }
+        }
+        
+        //kickoff data task
+        dataTask.resume()
     }
     
     // MARK: Module navigation methods
